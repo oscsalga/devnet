@@ -1,11 +1,9 @@
 import requests
 import json
 
-url = "https://sbx-nxos-mgmt.cisco.com/ins"
+url = "https://sbx-nxos-mgmt.cisco.com/ins" # /ins OBLIGATORIO
 user = "admin"
 password = "Admin_1234!"
-
-
 
 # "Content-type": "application/json" para configurar + cli_conf
 # para show "Content-type": "application/json-rpc" + cli_show

@@ -12,14 +12,14 @@ headers = {"Content-type": "application/json"}
 payload={
   "ins_api": {
     "version": "1.0",
-    "type": "cli_conf",
+    "type": "cli_show",
     "chunk": "0",
     "sid": "sid",
-    "input": "hostname sbx-n9kv-ao",
+    "input": "show runn",
     "output_format": "json"
   }
 }
 
 r = requests.post(url, data=json.dumps(payload), headers=headers, verify=False, auth=(user, password))
 
-print(r.json())
+print(json.dumps(r.json(), indent=2, sort_keys=True))

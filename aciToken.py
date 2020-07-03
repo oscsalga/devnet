@@ -14,3 +14,6 @@ print(token)
 cookie = {}
 cookie["APIC-Cookie"] = token
 print(cookie)
+
+r = requests.get(urlGet, headers=headers, verify=False, cookies=cookie).json()
+print(r)

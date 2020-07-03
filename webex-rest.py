@@ -1,5 +1,5 @@
 # curl -X GET "https://webexapis.com/v1/rooms"
-# -H "Authorization: Bearer NmJjZGVjZmMtZWEyMC00NThmLWJjNGMtMGNkZTU4N2Y1NWU1MGFhYWYxYzgtZWM5_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
+# -H "Authorization: Bearer "
 # -H "Accept: application/json"
 
 import requests

@@ -1,7 +1,9 @@
 import requests
 import json
-from pprint import pprint
+import urllib3
 
+# DISABLE SSL WARNING
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 username = "developer"
 password = "C1sco12345"
@@ -16,4 +18,5 @@ headers = {"Accept": "application/yang-data+json",
 r = requests.get(url, auth=(username, password), headers=headers, verify=False)
 
 rJson = r.json()
-pprint(rJson)
+
+print(json.dumps(rJson, indent=2))

@@ -1,26 +1,24 @@
+# Webex Clone Using WEBEX REST API
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from webexteamssdk import WebexTeamsAPI
 import requests
+import sys
 
 
 class Ui_OpenWeather(object):
     token = ""
-    constructor = WebexTeamsAPI(access_token=token)
-    id = ""
     urlRooms = "https://webexapis.com/v1/rooms"
     urlMessages = "https://webexapis.com/v1/messages?roomId="
     headers = {"Application": "application/json",
                "Authorization": "Bearer " + token}
-    roomId = ""
     rooms = {}
-    maxMessages = 20
+    maxMessages = 50
 
     def itemActivated_event(self, item, index):
         url = self.requestData(self.urlMessages + self.rooms[index]["id"] + "&max=" + str(self.maxMessages))["items"]
         self.listWidget2.clear()
         num = len(url)
-
-
         for x in range(0, num):
             #print(x)
             try:
@@ -35,33 +33,12 @@ class Ui_OpenWeather(object):
                 self.listWidget2.addItem("\n")
                 pass
 
-
-
-
-
-
-
-        '''self.listWidget2.clear()
-        for x in self.constructor.rooms.list():
-            if item.text() in x.title:
-                #print(x.id)
-                mensajes = self.constructor.messages.list(x.id, max=5)
-                for mensaje in mensajes:
-                    #print(mensaje.personId)
-
-                    nick = self.constructor.people.get(mensaje.personId).to_dict()
-
-                    self.listWidget2.addItem(nick["nickName"])
-                    self.listWidget2.addItem(mensaje.text)
-                    self.listWidget2.addItem("*" * 50)
-                    self.listWidget2.addItem("\n")
-'''
-        #self.constructor.messages.list()
-
     def requestData(self, url):
-        r = requests.get(url, headers=self.headers).json()
-        return r
-
+        r = requests.get(url, headers=self.headers)
+        if r.status_code == 200:
+            return r.json()
+        else:
+            sys.exit()
 
     def setupUi(self, OpenWeather):
 
@@ -76,17 +53,11 @@ class Ui_OpenWeather(object):
         self.listWidget2.setGeometry(QtCore.QRect(370, 10, 500, 531))
         self.listWidget2.setObjectName("listWidget")
 
-
         self.rooms = self.requestData(self.urlRooms)["items"]
         for room in self.rooms:
             self.listWidget.addItem(room["title"])
 
-
         self.listWidget.itemClicked.connect(lambda item: self.itemActivated_event(item, self.listWidget.currentRow()))
-
-
-
-
 
         self.retranslateUi(OpenWeather)
         QtCore.QMetaObject.connectSlotsByName(OpenWeather)

@@ -7,7 +7,7 @@ clave = "60dc4a5a9cbaec2de2279f548a35b806"
 urlOpen = f"http://api.openweathermap.org/data/2.5/weather?id=3529947&units=metric&APPID={clave}"
 
 # PROBANDO MERGE BRANCHES
-
+# PROBANDO
 
 
 while True:

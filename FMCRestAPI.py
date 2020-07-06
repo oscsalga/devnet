@@ -11,7 +11,7 @@ urlDevices = "https://fmcrestapisandbox.cisco.com/api/fmc_config/v1/domain/e276a
 headers = {"Content-type": "application/json"}
 
 r = requests.post(urlToken, headers=headers, auth=(username, password), verify=False)
-print(r.headers["X-auth-access-token"])
+print(r.headers) # Nos muestra X-auth-access-token dentro del diccionario
 token = r.headers["X-auth-access-token"]
 
 headers['X-auth-access-token'] = token

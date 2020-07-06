@@ -7,7 +7,7 @@ import sys
 
 
 class Ui_OpenWeather(object):
-    token = ""
+    token = "NGMzNDhhMDItNWFjNi00NTI2LTkxMDQtOGMyZTJkMWM4YTdkNDQ2MWM0Y2MtNGU2_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
     urlRooms = "https://webexapis.com/v1/rooms"
     urlMessages = "https://webexapis.com/v1/messages?roomId="
     headers = {"Application": "application/json",
@@ -41,7 +41,6 @@ class Ui_OpenWeather(object):
             sys.exit()
 
     def setupUi(self, OpenWeather):
-
         OpenWeather.setObjectName("OpenWeather")
         OpenWeather.resize(884, 560)
 
@@ -54,6 +53,7 @@ class Ui_OpenWeather(object):
         self.listWidget2.setObjectName("listWidget")
 
         self.rooms = self.requestData(self.urlRooms)["items"]
+
         for room in self.rooms:
             self.listWidget.addItem(room["title"])
 

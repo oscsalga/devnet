@@ -1,0 +1,41 @@
+#https://developer.cisco.com/docs/nso/#!getting-nso/installation
+# brew cast install java
+# brew cast install
+# brew install ant
+# sh nso-5.3.darwin.x86_64.signed.bin
+# sh nso-5.3.darwin.x86_64.installer.bin --local-install ~/nso-5.3
+# cd
+# source nso-5.3/ncsrc
+# ncs-setup --dest $HOME/ncs-run
+# cp -r nso-5.3/packages/neds/cisco-ios-cli-3.8/ ncs-run/packages/cisco-ios-cli-3.8
+# ncs-netsim create-network $NCS_DIR/packages/neds/cisco-ios-cli-3.8 3 c
+# ncs-netsim start
+# ncs-netsim cli-i c1
+# ncs-setup --netsim-dir ./netsim --dest .
+# ncs
+# ncs_cli -u admin
+# show configuration devices device
+# http://localhost:8080    admin:admin
+
+
+### ADD REAL DEVICES TO NSO ###
+## CREATE AUTHGROUP ##
+# admin@ncs(config)# devices authgroups group WORD
+# admin@ncs(config-group-TEST)# default-map remote-name WORD
+# admin@ncs(config-group-TEST)# default-map remote-password WORD
+# admin@ncs(config-group-TEST)# default-map remote-secondary-password WORD
+# commit
+
+# admin@ncs(config)# devices device WORD
+# admin@ncs(config-device-CRS-G)# address 172.18.104.55
+# admin@ncs(config-device-CRS-G)# port 22
+# admin@ncs(config-device-CRS-G)# authgroup WORD
+# admin@ncs(config-device-CRS-G)# device-type cli ned-id NED
+# admin@ncs(config-device-CRS-G)# state admin-state unlocked
+# admin@ncs(config)# devices fetch-ssh-host-keys device [ CRS-G ]
+# commit
+
+### EJCUTAR COMANDOS ###
+# devices device CRD-D live-status exec any show cdp ne
+
+# devices device CRS-F address 172.18.104.25 port 22 device-type cli ned-id cisco-iosxr-cli-7.18

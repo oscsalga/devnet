@@ -17,9 +17,10 @@ urlLogin = f"https://10.10.20.101/app/api/rest?opName=getRESTKey&user={username}
 urlUser = "https://10.10.20.101/cloupia/api-v2/user"
 urlModel = "https://10.10.20.101/cloupia/api-v2/costModel"
 
+
 token = requests.get(urlLogin, verify=False).json()
 print(token)
-headers ={"X-Cloupia-Request-key": token}
+headers = {"X-Cloupia-Request-key": token}
 
 r = requests.get(urlUser, headers=headers, verify=False)
 

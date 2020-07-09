@@ -1,6 +1,27 @@
 # https://developer.cisco.com/docs/nso/#!cisco-nso-swagger-api-docs
 # POSTMAN: http://localhost:8080/restconf/data/tailf-ncs:devices/device=CRD-D/config/tailf-ned-cisco-ios-xr:banner
 # /ncs:devices/device{CRD-D}/config/cisco-ios-xr:banner
+# http://localhost:8080/restconf/data/tailf-ncs:devices/device=CRD-D/config/
+
+### VIA CURL
+"""curl --location --request PUT 'http://localhost:8080/restconf/data/tailf-ncs:devices/device=CRD-D/config/tailf-ned-cisco-ios-xr:interface/Loopback=10' \
+--header 'Accept: application/yang-data+json' \
+--header 'Content-Type: application/yang-data+json' \
+--header 'Authorization: Basic YWRtaW46YWRtaW4=' \
+--data-raw '{
+  "tailf-ned-cisco-ios-xr:Loopback": [
+    {
+      "id": 6,
+      "description": "testing NSO6",
+      "ipv4": {
+        "address": {
+          "ip": "6.6.6.6",
+          "mask": "255.255.255.255"
+        }
+      }
+    }
+  ]
+}'"""
 
 import requests
 import json

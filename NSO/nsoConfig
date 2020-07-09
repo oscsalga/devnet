@@ -8,11 +8,17 @@
 # source nso-5.3/ncsrc
 # ncs-setup --dest $HOME/ncs-run
 # cp -r nso-5.3/packages/neds/cisco-ios-cli-3.8/ ncs-run/packages/cisco-ios-cli-3.8
+
+### PARA CREAR UNA SIMULACION
 # ncs-netsim create-network $NCS_DIR/packages/neds/cisco-ios-cli-3.8 3 c
 # ncs-netsim start
 # ncs-netsim cli-i c1
 # ncs-setup --netsim-dir ./netsim --dest .
+
+### PARA INICIAR NCS
 # ncs
+
+### CONSOLA ADMIN
 # ncs_cli -u admin
 # show configuration devices device
 # http://localhost:8080    admin:admin
@@ -26,6 +32,7 @@
 # admin@ncs(config-group-TEST)# default-map remote-secondary-password WORD
 # commit
 
+# package reload
 # admin@ncs(config)# devices device WORD
 # admin@ncs(config-device-CRS-G)# address 172.18.104.55
 # admin@ncs(config-device-CRS-G)# port 22
@@ -34,6 +41,9 @@
 # admin@ncs(config-device-CRS-G)# state admin-state unlocked
 # admin@ncs(config)# devices fetch-ssh-host-keys device [ CRS-G ]
 # commit
+
+# ver config devices
+# show running-config devices device config
 
 ### EJCUTAR COMANDOS ###
 # devices device CRD-D live-status exec any show cdp ne

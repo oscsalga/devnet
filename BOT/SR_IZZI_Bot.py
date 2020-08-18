@@ -9,20 +9,22 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+token = "NDg4NDQ3YWEtNjkyNC00ZGI5LTkwODQtOTZhMTliNmE1MWM4YmI2MWIwMjctZTZm_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
+roomID = "Y2lzY29zcGFyazovL3VzL1JPT00vOGQxODVlYzAtZTBkMi0xMWVhLTk4MjUtM2I3Zjk4MThjODYz"
+
 
 def task(env):
-    #Authorization for the bot
-    
-    headers = {
-        'Authorization': 'Bearer NDg4NDQ3YWEtNjkyNC00ZGI5LTkwODQtOTZhMTliNmE1MWM4YmI2MWIwMjctZTZm_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f'}
+    # Authorization for the bot
 
-    sr = {"roomId": "Y2lzY29zcGFyazovL3VzL1JPT00vOGQxODVlYzAtZTBkMi0xMWVhLTk4MjUtM2I3Zjk4MThjODYz",
+    headers = {
+        'Authorization': 'Bearer ' + token}
+
+    sr = {"roomId": roomID,
           "markdown": "Test"}
     requests.post('https://api.ciscospark.com/v1/messages',
                   json=sr, headers=headers)
-    
-    
-    return "This task is not meant to be executed manually."
+
+    return token
 
 
 def borg_module(env, meta_data, cisco_service_request):
@@ -32,7 +34,7 @@ def borg_module(env, meta_data, cisco_service_request):
 
     """Authorization for the bot"""
     headers = {
-        'Authorization': 'Bearer NDg4NDQ3YWEtNjkyNC00ZGI5LTkwODQtOTZhMTliNmE1MWM4YmI2MWIwMjctZTZm_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f'}
+        'Authorization': 'Bearer ' + token}
 
     """Gathering SR details"""
     sr = SR_meta["CaseNumber"]
@@ -47,13 +49,14 @@ def borg_module(env, meta_data, cisco_service_request):
     workgroup = SR_meta["Workgroup__c"]
     contract_id = str(SR_meta["ContractId"])
     current_contact_mail = SR_meta["Current_Contact_Email__c"]
-
+    device = str(meta_data["case"])
     """Define when to alert, on engineer change and creation"""
     change_type = SR_meta["ChangeType"]
     change_types_to_run_on = ["TACENGINEER_CHANGED"]
     fixed_contract_id = ["10000201673992", "200994944", "200998434", "200998451", "200998453", "201001054",
-                         "201029449", "201872033", "202221453", "202369173", "202643856", "93311039", "94594589", "94596454"]
-    
+                         "201029449", "201872033", "202221453", "202369173", "202643856", "93311039", "94594589",
+                         "94596454"]
+
     golden_rule_comment = """PLEASE DO NOT FORGET TO UPDATE GCI\n\n
 In case you take an SR with the following characteristics:\n\n
 Customer: Izzi/Cablevision (Mexico)\n
@@ -116,8 +119,7 @@ Ricardo Miguel Fernandes Mega Fontes (rmegafon): 00 - 8 hrs  CT\n
 Also consider involve the following people:\n
 HTTS Main Contact: Diego Zorrilla  9 - 20 hrs(diefierr) CT\n
 BU: Nikolay Karpyshev (nkarpysh)"""
-    
-    
+
     #######################################################
     try:
 
@@ -157,7 +159,7 @@ BU: Nikolay Karpyshev (nkarpysh)"""
                         change_type = "Requeued to " + str(sr_owner)
                     else:
                         change_type = "Requeued from " + \
-                            str(sr_prev_owner) + " to " + str(sr_owner)
+                                      str(sr_prev_owner) + " to " + str(sr_owner)
 
                 elif (status == "Requeue" and prev_queue == 'unknown'):
                     change_type = "Requeued to " + owner_queue
@@ -165,10 +167,8 @@ BU: Nikolay Karpyshev (nkarpysh)"""
                 elif (status == "Requeue" and prev_queue != owner_queue):
                     change_type = "Requeued from " + prev_queue + " to " + owner_queue
 
-
-
             sr_with_link = "<a href='https://scripts.cisco.com/app/quicker_csone/?sr=" + \
-                sr + "' target='_blank'>" + sr + "</a>"
+                           sr + "' target='_blank'>" + sr + "</a>"
             owner_with_link = "<a href='https://directory.cisco.com/dir/reports/" + \
                               owner + "' target='_blank'>" + owner + "</a>"
 
@@ -179,25 +179,26 @@ BU: Nikolay Karpyshev (nkarpysh)"""
 
             if ((status == "New") or (status == "Requeue") or (status == "Closed")):
                 note = "<br/>" + "**NOTE:** " + 'Please make sure that you go through the "GOLDEN RULES" for the SR#' + \
-                    sr + ', before sending the mail to the Client.' + "<br/>---"
+                       sr + ', before sending the mail to the Client.' + "<br/>---"
             else:
                 note = "<br/>---"
 
             data = "---<br/>" + "**Time:** " + time_now + "<br/>" + fast_start + "**SR:** " + sr_with_link + "<br/>" + "**Title:** " + title + "<br/>" + "**Sev:** <b>" + sev + \
-                "</b><br/>" + "**Contract ID:** <b>" + contract_id + "</b><br/>" + "**Customer:** " + \
-                customer + "<br/>" + "**Status:** " + change_type + \
-                "<br/>" + "**Owner:** " + owner_with_link + note
+                   "</b><br/>" + "**Contract ID:** <b>" + contract_id + "</b><br/>" + "**Customer:** " + \
+                   customer + "<br/>" + "**Status:** " + change_type + \
+                   "<br/>" + "**Owner:** " + owner_with_link + note
 
             """Set the room to IZZI"""
             sr_json = {
-                "roomId": "Y2lzY29zcGFyazovL3VzL1JPT00vOGQxODVlYzAtZTBkMi0xMWVhLTk4MjUtM2I3Zjk4MThjODYz",
-                "markdown": contract_id
+                "roomId": roomID,
+                "markdown": device
             }
             requests.post('https://api.ciscospark.com/v1/messages',
                           json=sr_json, headers=headers)
 
         if (change_type.strip().upper() in change_types_to_run_on) and \
-                ((contract_id in fixed_contract_id) or ("@izzi.mx" in current_contact_mail) or ("@izzi.mx" in current_contact_mail)):
+                ((contract_id in fixed_contract_id) or ("@izzi.mx" in current_contact_mail) or (
+                        "@izzi.mx" in current_contact_mail)):
 
             URL = "http://orgstats.cisco.com/api/1/entries?users="
             r = requests.get(URL + owner)
@@ -219,7 +220,7 @@ BU: Nikolay Karpyshev (nkarpysh)"""
             except Exception as e:
                 rl.debug("exception {}".format(e))
                 msg = 'Will continue evenif case note giving exception.'
-            
+
             msg = 'Sending system generated Email to All CSE.'
             body = 'Hi ' + owner + ',' + '<br><br>'
             imp_comment = 'Since you are the current owner of this case, please make sure that you go through the "GOLDEN RULES" for the SR#' + str(
@@ -230,7 +231,7 @@ BU: Nikolay Karpyshev (nkarpysh)"""
             subject = 'READONLY IF INCIDENT IS CGSE RELATED: Important Notes for SR#' + str(sr)
             to = str(owner)+'@cisco.com'
             cc = 'fts-izzi@cisco.com'
-            
+
             rl.debug("sending mail with body {}".format(body))
             emailHtml('bdb_no_reply@cisco.com', to, cc, subject, body)
             """
@@ -240,7 +241,6 @@ BU: Nikolay Karpyshev (nkarpysh)"""
         emailHtml('bdb_no_reply@cisco.com',
                   'oscsalga@cisco.com', '', 'Error', str(e))
         return rl
-
 
 
 def emailHtml(addrFrom, addrTo, addrCc, subject, htmlBody):

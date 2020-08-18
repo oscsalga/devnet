@@ -10,7 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 token = "NDg4NDQ3YWEtNjkyNC00ZGI5LTkwODQtOTZhMTliNmE1MWM4YmI2MWIwMjctZTZm_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
-roomID = "Y2lzY29zcGFyazovL3VzL1JPT00vOGQxODVlYzAtZTBkMi0xMWVhLTk4MjUtM2I3Zjk4MThjODYz"
+roomID = "Y2lzY29zcGFyazovL3VzL1JPT00vZDMyYzdhY2EtYTg1ZC0zYzNhLWIzZjMtNmU1MTBmODViYWUy"
 
 
 def task(env):
@@ -24,7 +24,7 @@ def task(env):
     requests.post('https://api.ciscospark.com/v1/messages',
                   json=sr, headers=headers)
 
-    return token
+    return "Task Function"
 
 
 def borg_module(env, meta_data, cisco_service_request):
@@ -49,7 +49,7 @@ def borg_module(env, meta_data, cisco_service_request):
     workgroup = SR_meta["Workgroup__c"]
     contract_id = str(SR_meta["ContractId"])
     current_contact_mail = SR_meta["Current_Contact_Email__c"]
-    device = str(meta_data["case"])
+    #device = str(meta_data["case"])
     """Define when to alert, on engineer change and creation"""
     change_type = SR_meta["ChangeType"]
     change_types_to_run_on = ["TACENGINEER_CHANGED"]
@@ -181,17 +181,17 @@ BU: Nikolay Karpyshev (nkarpysh)"""
                 note = "<br/>" + "**NOTE:** " + 'Please make sure that you go through the "GOLDEN RULES" for the SR#' + \
                        sr + ', before sending the mail to the Client.' + "<br/>---"
             else:
-                note = "<br/>---"
+                note = "<br/>***---"
 
-            data = "---<br/>" + "**Time:** " + time_now + "<br/>" + fast_start + "**SR:** " + sr_with_link + "<br/>" + "**Title:** " + title + "<br/>" + "**Sev:** <b>" + sev + \
+            data = "---<br/>***IZZI<br/>" + "**Time:** " + time_now + "<br/>" + fast_start + "**SR:** " + sr_with_link + "<br/>" + "**Title:** " + title + "<br/>" + "**Sev:** <b>" + sev + \
                    "</b><br/>" + "**Contract ID:** <b>" + contract_id + "</b><br/>" + "**Customer:** " + \
                    customer + "<br/>" + "**Status:** " + change_type + \
                    "<br/>" + "**Owner:** " + owner_with_link + note
 
             """Set the room to IZZI"""
             sr_json = {
-                "roomId": roomID,
-                "markdown": device
+                "roomId": "Y2lzY29zcGFyazovL3VzL1JPT00vZDMyYzdhY2EtYTg1ZC0zYzNhLWIzZjMtNmU1MTBmODViYWUy",
+                "markdown": data
             }
             requests.post('https://api.ciscospark.com/v1/messages',
                           json=sr_json, headers=headers)

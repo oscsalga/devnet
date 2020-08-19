@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from borg3.result import ResultList, Result, Severity
-from datetime import datetime, date
+from datetime import datetime
 from pytz import timezone
 import requests
 import json
@@ -11,30 +11,39 @@ from email.mime.text import MIMEText
 
 token = "NDg4NDQ3YWEtNjkyNC00ZGI5LTkwODQtOTZhMTliNmE1MWM4YmI2MWIwMjctZTZm_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
 roomID = "Y2lzY29zcGFyazovL3VzL1JPT00vZDMyYzdhY2EtYTg1ZC0zYzNhLWIzZjMtNmU1MTBmODViYWUy"
+emailList = ["@izzi.mx"]
+fixed_contract_id = ["10000201673992", "200994944", "200998434", "200998451", "200998453", "201001054",
+                     "201029449", "201872033", "202221453", "202369173", "202643856", "93311039", "94594589",
+                     "94596454"]
 
 
 def task(env):
-    # Authorization for the bot
+    return sendMessage("Testing Izzi: " + fecha())
 
-    headers = {
-        'Authorization': 'Bearer ' + token}
 
+def sendMessage(mensaje):
+    headers = {'Authorization': 'Bearer ' + token}
     sr = {"roomId": roomID,
-          "markdown": "Test"}
-    requests.post('https://api.ciscospark.com/v1/messages',
-                  json=sr, headers=headers)
+          "markdown": mensaje}
+    try:
+        r = requests.post('https://api.ciscospark.com/v1/messages',
+                          data=sr, headers=headers)
+        return mensaje
+    except Exception as e:
+        pass
 
-    return "Task Function"
+
+def fecha():
+    mxTimeZone = timezone('America/Mexico_City')
+    mxTime = datetime.now(mxTimeZone)
+    mxTime = mxTime.strftime('%H:%M:%S')
+    return mxTime
 
 
 def borg_module(env, meta_data, cisco_service_request):
     """Check cases and sends to Spark room for IZZI."""
     rl = ResultList()
     SR_meta = meta_data['case']
-
-    """Authorization for the bot"""
-    headers = {
-        'Authorization': 'Bearer ' + token}
 
     """Gathering SR details"""
     sr = SR_meta["CaseNumber"]
@@ -49,102 +58,17 @@ def borg_module(env, meta_data, cisco_service_request):
     workgroup = SR_meta["Workgroup__c"]
     contract_id = str(SR_meta["ContractId"])
     current_contact_mail = SR_meta["Current_Contact_Email__c"]
-    #device = str(meta_data["case"])
+    # device = str(meta_data["case"])
     """Define when to alert, on engineer change and creation"""
     change_type = SR_meta["ChangeType"]
     change_types_to_run_on = ["TACENGINEER_CHANGED"]
-    fixed_contract_id = ["10000201673992", "200994944", "200998434", "200998451", "200998453", "201001054",
-                         "201029449", "201872033", "202221453", "202369173", "202643856", "93311039", "94594589",
-                         "94596454"]
-
-    golden_rule_comment = """PLEASE DO NOT FORGET TO UPDATE GCI\n\n
-In case you take an SR with the following characteristics:\n\n
-Customer: Izzi/Cablevision (Mexico)\n
-Technology: XR-Routing-Platforms\n
-Sub Technology: CRS\n
-SW Versions: 5.3.4 / 6.4.2\n
-Possible title keywords: Traffic Drops, Low Traffic, Traffic down\n\n
-Background:\n
-This is a highly escalated incident (ESC01022683 / BEMS01020722 / Main SR 685943823) in which IZZI has multiple CRSs with XR Versions 5.3.4 and 6.4.2, and in random time and random CGSE we see that for +/- 1 hour the traffic drops about 5% to 10% affecting end users with slow navigation or no navigation at all. Without action the traffic recovers.\n\n
-Please do not ask for topology, it can be found at https://eportal.cisco.com/#/account/141046/links\n
-For more detailed information contact the people in the Main Contacts section\n\n
-Logs to be taken\n
-When the failure is present, please capture the following logs:\n \n
-show logrun on -f node0_1_cpu0 show_nat44_stats\n
-Show plim services trace core error location 0/1/CPU0\n
-show cgn nat44 NAT44-1 statistics\n
-show cgn nat44 NAT44-1 statistics | in resource\n
-show cgn nat44 NAT44-1 statistics | in drop\n
-sh cgn nat44 nat44-2 mapping outside-address inside-vrf Inside2 start-addr 177.236.48.1 end-addr 177.236.55.254\n
-show controllers pse statistics location 0/1/CPU0\n
-show captured packets egress location 0/1/CPU0\n
-show controllers pse utilization ingress location 0/1/CPU0\n
-show controllers pse utilization egress location 0/1/CPU0\n
-show controllers egress statistics location 0/1/CPU0\n
-show controllers egress resources location 0/1/CPU0\n
-show controllers ingress statistics location 0/1/CPU0\n
-show controllers ingress backpressure all location 0/1/CPU0\n
-show controllers plim asic statistics summary location 0/1/CPU0\n
-show controllers fabricq statistics detail location 0/1/CPU0\n
-show controllers services driver location 0/1/CPU0\n
-Show controller service boot-params location 0/1/CPU0\n
-show controllers services ha-config location 0/1/CPU0\n
-Show services redundancy brief\n
-Show cgn trace master-agent\n
-show interface serviceInfra1 accounting\n
-show interface serviceapp1 accounting\n
-show interface serviceapp1\n
-show interface serviceapp1 | in rate\n
-show interface serviceapp1 | in drops\n
-show interface serviceapp101 accounting\n
-show interface serviceapp101\n
-show interface serviceapp101 | in rate\n
-show interface serviceapp101 | in drops\n
-show route vrf INSIDE-CGSE1-SEV\n
-show processes blocked location 0/1/CPU0\n
-show processes blocked\n
-show cgn nat44 NAT44-1 inside-vrf INSIDE-CGSE1-SEV counters\n \n
-show tech-support services cgn location 0/2/CPU0 | file harddisk:/cgn\n
-show tech-support services svi location 0/2/CPU0 | file harddisk:/svi\n\n
-Action Plan to recover services\n
-The AP we have until now in order to recover services:\n\n
-1. Clear CEF/Route from corresponding affected CGSE from public prefix\n
-2. Shut ServiceApp internal and external, wait 30 seg and perform no shut\n
-3. Reconfigure CGS Service\n\n
-Main Contacts\n\n
-Please contact the following HTOM ASAP in the following schedule (all CST , from Monday - Friday):\n
-Rafael Rojas (rarojas): 9 - 15 hrs  CT\n
-Efrain Abarca (efabarca): 15 - 00 hrs  CT\n
-Ricardo Miguel Fernandes Mega Fontes (rmegafon): 00 - 8 hrs  CT\n
-Also consider involve the following people:\n
-HTTS Main Contact: Diego Zorrilla  9 - 20 hrs(diefierr) CT\n
-BU: Nikolay Karpyshev (nkarpysh)"""
 
     #######################################################
     try:
 
-        if (contract_id in fixed_contract_id) or ("@izzi.mx" in current_contact_mail):
-            # Getting the local time now
-            utc_curr_time = datetime.strptime(datetime.now().strftime(
-                '%Y-%m-%d %H:%M:%S'), "%Y-%m-%d %H:%M:%S")
-            local_cst_time = str(utc_curr_time.replace(tzinfo=timezone(
-                'UTC')).astimezone(timezone('America/Mexico_City')))
-            local_date = local_cst_time[:local_cst_time.rfind('-')]
-
-            curr_date = datetime.strptime(str(local_date), "%Y-%m-%d %H:%M:%S")
-            local_date = str(datetime.strptime(
-                local_date, "%Y-%m-%d %H:%M:%S").date())
-
-            if len(str(curr_date.minute)) == 1:
-                minutes = '0' + str(curr_date.minute)
-            elif len(str(curr_date.minute)) == 2:
-                minutes = str(curr_date.minute)
-
-            time_now = str(curr_date.hour) + ':' + minutes
-
+        if (contract_id in fixed_contract_id) or (current_contact_mail in emailList):
             if (owner == "NULL"):
                 owner = "CSE yet to pick this case."
-
             fast_start = ''
             golden_line = ''
             case_note = ''
@@ -183,22 +107,15 @@ BU: Nikolay Karpyshev (nkarpysh)"""
             else:
                 note = "<br/>***---"
 
-            data = "---<br/>***IZZI<br/>" + "**Time:** " + time_now + "<br/>" + fast_start + "**SR:** " + sr_with_link + "<br/>" + "**Title:** " + title + "<br/>" + "**Sev:** <b>" + sev + \
+            data = "---<br/>***IZZI<br/>" + "**Time:** " + fecha() + "<br/>" + fast_start + "**SR:** " + sr_with_link + "<br/>" + "**Title:** " + title + "<br/>" + "**Sev:** <b>" + sev + \
                    "</b><br/>" + "**Contract ID:** <b>" + contract_id + "</b><br/>" + "**Customer:** " + \
                    customer + "<br/>" + "**Status:** " + change_type + \
                    "<br/>" + "**Owner:** " + owner_with_link + note
 
-            """Set the room to IZZI"""
-            sr_json = {
-                "roomId": "Y2lzY29zcGFyazovL3VzL1JPT00vZDMyYzdhY2EtYTg1ZC0zYzNhLWIzZjMtNmU1MTBmODViYWUy",
-                "markdown": data
-            }
-            requests.post('https://api.ciscospark.com/v1/messages',
-                          json=sr_json, headers=headers)
+            sendMessage(data)
 
         if (change_type.strip().upper() in change_types_to_run_on) and \
-                ((contract_id in fixed_contract_id) or ("@izzi.mx" in current_contact_mail) or (
-                        "@izzi.mx" in current_contact_mail)):
+                ((contract_id in fixed_contract_id) or (current_contact_mail in emailList)):
 
             URL = "http://orgstats.cisco.com/api/1/entries?users="
             r = requests.get(URL + owner)
@@ -210,31 +127,7 @@ BU: Nikolay Karpyshev (nkarpysh)"""
             golden_line = ''
             case_note = ''
             fast_start, sr_owner, sr_prev_owner, golden_line, case_note = get_case_details(cisco_service_request)
-            """
-            try:
-                rl.debug("adding case note {}".format(golden_rule_comment))
-                ret_stat = addNote(owner, sr, golden_rule_comment)
-                golden_line = ''
-                for each_line in golden_rule_comment.splitlines():
-                    golden_line += each_line + '<br>'
-            except Exception as e:
-                rl.debug("exception {}".format(e))
-                msg = 'Will continue evenif case note giving exception.'
 
-            msg = 'Sending system generated Email to All CSE.'
-            body = 'Hi ' + owner + ',' + '<br><br>'
-            imp_comment = 'Since you are the current owner of this case, please make sure that you go through the "GOLDEN RULES" for the SR#' + str(
-                sr) + ', before sending the mail to the Client. ' + '<br><br>' + golden_line
-            body += '<p style="background-color:#FFFF00;color:#B22222"><b> Important Note: ' + \
-                '<br>' + '=============<br>' + imp_comment + '</b></p><br><br>'
-
-            subject = 'READONLY IF INCIDENT IS CGSE RELATED: Important Notes for SR#' + str(sr)
-            to = str(owner)+'@cisco.com'
-            cc = 'fts-izzi@cisco.com'
-
-            rl.debug("sending mail with body {}".format(body))
-            emailHtml('bdb_no_reply@cisco.com', to, cc, subject, body)
-            """
         return rl
 
     except Exception as e:

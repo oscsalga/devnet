@@ -34,7 +34,7 @@ class Drops:
     def __init__(self, ip):
         try:
             self.net_connect = ConnectHandler(device_type='cisco_xr', ip=ip,
-                                          username='oscsalga', password="Ximena8.", timeout=20)
+                                          username='oscsalga', password="", timeout=20)
             self.ip = ip
         except Exception as e:
             #print(str(e))

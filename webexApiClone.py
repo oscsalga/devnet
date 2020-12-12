@@ -7,7 +7,7 @@ import sys
 
 
 class Ui_OpenWeather(object):
-    token = "NGMzNDhhMDItNWFjNi00NTI2LTkxMDQtOGMyZTJkMWM4YTdkNDQ2MWM0Y2MtNGU2_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
+    token = "ZDk3ZTg0N2ItY2JlMS00ZWNhLTg3YzctYjUxNTdmNTE0Y2VlMGZiMDQyZTctZDhi_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
     urlRooms = "https://webexapis.com/v1/rooms"
     urlMessages = "https://webexapis.com/v1/messages?roomId="
     headers = {"Application": "application/json",

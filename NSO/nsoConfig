@@ -16,12 +16,21 @@
 # ncs-setup --netsim-dir ./netsim --dest .
 
 ### PARA INICIAR NCS
+cd ncs-run/
 # ncs
 
 ### CONSOLA ADMIN
-# ncs_cli -u admin
+# ncs_cli -u admin -C
 # show configuration devices device
 # http://localhost:8080    admin:admin
+# o mediante SSH: ssh admin@localhost -p 2024
+
+### DETENER NCS
+# ncs-run]$ ncs --stop
+# logs: ncs-run]$ logs/ncs.log
+
+### RESTORE SYSTEM
+# ncs-run]$ ncs-setup --reset
 
 
 ### ADD REAL DEVICES TO NSO ###
@@ -32,7 +41,9 @@
 # admin@ncs(config-group-TEST)# default-map remote-secondary-password WORD
 # commit
 
-# package reload
+# ncs_cli -u admin -C
+#admin@ncs       package reload [force]
+# show packages package package-version
 # admin@ncs(config)# devices device WORD
 # admin@ncs(config-device-CRS-G)# address 172.18.104.55
 # admin@ncs(config-device-CRS-G)# port 22

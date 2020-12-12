@@ -27,6 +27,9 @@ def conexion():
     try:
         net_connect = ConnectHandler(device_type='cisco_xr', ip=hostname, port=port,
                                               username=user, password=password, timeout=timeout)
+
+        print(type(net_connect))
+        time.sleep(10)
         return net_connect
     except Exception as e:
         print("el error fue: " + str(e))

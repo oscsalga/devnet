@@ -4,7 +4,7 @@ import json
 username = "admin"
 password = "Admin_1234!"
 urlLogin = "https://sbx-nxos-mgmt.cisco.com/api/aaaLogin.json"
-urlGet = "https://sbx-nxos-mgmt.cisco.com//api/node/mo/sys/bd/bd-[vlan-10].json"
+urlGet = "https://sbx-nxos-mgmt.cisco.com//api/node/mo/sys/bd/bd-[vlan-1].json"
 
 headers = {"Content-Type": "application/json"}
 payload = '{"aaaUser":{"attributes": {"name": "admin","pwd": "Admin_1234!"}}}'

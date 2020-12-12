@@ -34,10 +34,10 @@ class Drops:
     def __init__(self, ip):
         try:
             self.net_connect = ConnectHandler(device_type='cisco_xr', ip=ip,
-                                          username='', password="", timeout=20)
+                                          username="oscsalga", password="Ximena8.", timeout=20)
             self.ip = ip
         except Exception as e:
-            #print(str(e))
+            print(str(e))
             self.fileError("ERROR_LOGS", ip, self.fecha, str(e))
             sys.exit()
 
@@ -54,7 +54,6 @@ class Drops:
 
     def findHostname(self):
         hostname = self.net_connect.find_prompt()
-        time.sleep(5)
         hostname = hostname.split(':', 1)[-1].strip()
         hostname = hostname.replace("#", "")
         return hostname
@@ -174,6 +173,7 @@ class Drops:
     def ejecutarComando(self, command):
         try:
             comando = self.net_connect.send_command(command, delay_factor=2)
+
             return comando
         except Exception as e:
             self.fileError("ERROR_LOGS_COMANDO", self.ip, self.fecha, str(e))

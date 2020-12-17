@@ -1,0 +1,40 @@
+191.96.200.0/23
+Search pattern never detected in send_command_expect: RP/0/RP0/CPU0:ASR\-9922\-B\#
+
+**************************************************
+encapsulatio
+Search pattern never detected in send_command_expect: RP/0/RSP0/CPU0:ASR9006\-N\#
+
+**************************************************
+ios-regex '^(4637_)+(45147_)+(23666_
+Search pattern never detected in send_command_expect: RP/0/RP0/CPU0:CRS\-B\#
+
+**************************************************
+ipv4 un
+Search pattern never detected in send_command_expect: RP/0/RSP1/CPU0:ASR9906\-A\#
+
+**************************************************
+11.1.8.88/32 GigabitEthernet0/0/0/6 10.243.244.5
+Timed-out reading channel, pattern not found in output: show\ platf
+
+**************************************************
+196.200.96.0/20 le 24,
+Search pattern never detected in send_command_expect: RP/0/RSP0/CPU0:ASR\-9010\-A\#
+
+**************************************************
+ios-regex '(4
+Timed-out reading channel, pattern not found in output: show\ platf
+
+**************************************************
+10.68.1
+Timed-out reading channel, pattern not found in output: show\ platf
+
+**************************************************
+2804:
+Timed-out reading channel, pattern not found in output: show\ platf
+
+**************************************************
+155.131.144.0/2
+Search pattern never detected in send_command_expect: 192\.49\.91\.0/
+
+**************************************************
